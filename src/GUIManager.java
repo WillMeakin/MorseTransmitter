@@ -51,11 +51,6 @@ public class GUIManager {
     }
 
     public void updateRoman(char romanChar){
-        int length = romanTxtArea.getText().length();
-        System.out.println(length);
-        System.out.println(romanTxtArea.getText().charAt(length-1));
-        System.out.println(romanTxtArea.getText());
-        //romanTxtArea.replaceRange("SHIT!!!!", 0, romanTxtArea.getText().length());
         romanTxtArea.replaceRange(String.valueOf(romanChar), romanTxtArea.getText().length()-1, romanTxtArea.getText().length());
     }
 

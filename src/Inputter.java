@@ -35,12 +35,11 @@ public class Inputter implements KeyListener{
 			keyBeingHeld = true;
 			if (beginPress - endPress > spaceTime && !atBeginning){
 				gui.appendMorse(" / ");
-				//gui.appendRoman(translator.toRoman(lastLetter));
+				gui.appendRoman(' ');
 				lastLetter = "";
 			}
 			else if (beginPress - endPress > dashTime && !atBeginning){
 				gui.appendMorse(" ");
-				//gui.appendRoman(translator.toRoman(lastLetter));
 				lastLetter = "";
 			}
 			atBeginning = false;
