@@ -6,8 +6,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class AudioManager {
-    File toneFile;
-    Clip tone;
+	private final File toneFile;
+	private Clip tone;
 
     public AudioManager(String audioFile){
 		toneFile = new File(audioFile);

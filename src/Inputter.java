@@ -18,6 +18,8 @@ public class Inputter implements KeyListener{
 	boolean keyBeingHeld = false;	//Ensures key pressed only once on hold.
 	boolean atBeginning = true;		//Prevents leading space (" / ")
 
+	String lastLetter = "";
+
 	GUIManager gui = new GUIManager(this);
 	AudioManager audioManager = new AudioManager("550.wav");
 	MorseTranslator translator = new MorseTranslator();
@@ -33,16 +35,19 @@ public class Inputter implements KeyListener{
 			keyBeingHeld = true;
 			if (beginPress - endPress > spaceTime && !atBeginning){
 				gui.appendMorse(" / ");
-				//TODO: Translate
+				//gui.appendRoman(translator.toRoman(lastLetter));
+				lastLetter = "";
 			}
-			else if (beginPress - endPress > dashTime){
+			else if (beginPress - endPress > dashTime && !atBeginning){
 				gui.appendMorse(" ");
-				//TODO: Translate
+				//gui.appendRoman(translator.toRoman(lastLetter));
+				lastLetter = "";
 			}
 			atBeginning = false;
 		}else if (key.getKeyCode() == KeyEvent.VK_BACK_SPACE){
 			gui.resetTxtAreas();
 			atBeginning = true;
+			lastLetter = "";
 		}
 	}
 
@@ -51,12 +56,26 @@ public class Inputter implements KeyListener{
 		audioManager.stop();
 
 		if (key.getKeyCode() == KeyEvent.VK_ENTER)
-			if (endPress - beginPress <= dotTime + errMargin)
+			if (endPress - beginPress <= dotTime + errMargin) {
 				gui.appendMorse(".");
-			else
+				lastLetter += '.';
+				updateRomanGUI();
+			}
+			else {
 				gui.appendMorse("-");
-
+				lastLetter += '-';
+				updateRomanGUI();
+			}
 		keyBeingHeld = false;
+		System.out.println(lastLetter);
+
+	}
+
+	private void updateRomanGUI(){
+		if (lastLetter.length() == 1)
+			gui.appendRoman(translator.toRoman(lastLetter));
+		else
+			gui.updateRoman(translator.toRoman(lastLetter));
 	}
 
 	public void keyTyped(KeyEvent key) {
