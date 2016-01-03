@@ -1,24 +1,11 @@
-//TODO: Separate into classes: Inputter (KeyListener), GUIManager, SoundManager(Tone), Translator.
-//TODO: Rename to MorseTrainer, move to GitHub.
-
-import javax.sound.sampled.*;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
-import java.io.IOException;
 
 public class Inputter implements KeyListener{
 
-	JFrame frame = new JFrame("Morse Code");
-	JTextArea morseLbl = new JTextArea();
-	JTextArea transLbl = new JTextArea();
-
-	JPanel panel = new JPanel();
-
 	int sendKey = KeyEvent.VK_ENTER;
 
+	//Timing - TODO: Farnsworth speed for playback.
 	int wpm = 10;
 	int dotTime = 1200/wpm;	//Milliseconds
 	int dashTime = 3*dotTime;
@@ -28,96 +15,50 @@ public class Inputter implements KeyListener{
 	long beginPress = -1;
 	long endPress = -1;
 
-	boolean atBeginning = true;
+	boolean keyBeingHeld = false;	//Ensures key pressed only once on hold.
+	boolean atBeginning = true;		//Prevents leading space (" / ")
 
-	File toneFile = new File("550.wav");
-	Clip tone;
+	GUIManager gui = new GUIManager(this);
+	AudioManager audioManager = new AudioManager("550.wav");
+	MorseTranslator translator = new MorseTranslator();
 
 	public Inputter(){
-		frame.setSize(300, 300);
-
-		frame.addKeyListener(this);
-		morseLbl.addKeyListener(this);
-		transLbl.addKeyListener(this);
-
-		panel.setOpaque(true);
-		panel.setBackground(Color.WHITE);
-		panel.setLayout(null);
-		panel.setSize(300, 300);
-		frame.add(panel);
-
-		morseLbl.setLineWrap(true);
-		transLbl.setLineWrap(true);
-		morseLbl.setEditable(false);
-		transLbl.setEditable(false);
-		morseLbl.setBounds(0, 0, 300, 150);
-		transLbl.setBounds(0, 150, 300, 150);
-		morseLbl.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-		transLbl.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-		morseLbl.setText("Morse: ");
-		transLbl.setText("Roman: ");
-		panel.add(morseLbl);
-		panel.add(transLbl);
-
-		frame.setVisible(true);
-
-		try{
-			tone = AudioSystem.getClip();
-			tone.open(AudioSystem.getAudioInputStream(toneFile.getAbsoluteFile()));
-		}catch (LineUnavailableException e){
-			e.printStackTrace();
-		}catch (IOException e){
-			e.printStackTrace();
-		}catch (UnsupportedAudioFileException e){
-			e.printStackTrace();
-		}
 	}
 
 	public void keyPressed(KeyEvent key){
 
-		if (key.getKeyCode() == sendKey && beginPress == -1){
-			tone.start();
-			tone.loop(Clip.LOOP_CONTINUOUSLY);
+		if (key.getKeyCode() == sendKey && !keyBeingHeld){
+			audioManager.play();
 			beginPress = System.currentTimeMillis();
+			keyBeingHeld = true;
 			if (beginPress - endPress > spaceTime && !atBeginning){
-				morseLbl.append(" / ");
+				gui.appendMorse(" / ");
+				//TODO: Translate
 			}
 			else if (beginPress - endPress > dashTime){
-				morseLbl.append(" ");
+				gui.appendMorse(" ");
 				//TODO: Translate
 			}
 			atBeginning = false;
 		}else if (key.getKeyCode() == KeyEvent.VK_BACK_SPACE){
-			morseLbl.setText("Morse: ");
-			transLbl.setText("Roman: ");
+			gui.resetTxtAreas();
 			atBeginning = true;
 		}
 	}
 
 	public void keyReleased(KeyEvent key){
 		endPress = System.currentTimeMillis();
-		tone.stop();
-
-		tone.setFramePosition(0);
+		audioManager.stop();
 
 		if (key.getKeyCode() == KeyEvent.VK_ENTER)
 			if (endPress - beginPress <= dotTime + errMargin)
-				morseLbl.append(".");
+				gui.appendMorse(".");
 			else
-				morseLbl.append("-");
+				gui.appendMorse("-");
 
-		beginPress = -1;
+		keyBeingHeld = false;
 	}
 
-	public void keyTyped(KeyEvent key){
-	}
-
-	public static void main(String[] args){
-
-		System.out.println("Use Enter/Return for input:");
-
-		new Inputter();
-
-
+	public void keyTyped(KeyEvent key) {
 	}
 }
