@@ -5,8 +5,8 @@ public class Inputter implements KeyListener{
 
 	int sendKey = KeyEvent.VK_ENTER;
 
-	//Timing - TODO: Farnsworth speed for playback.
-	int wpm = 10;
+	//Timing - TODO: Farnsworth speed for playback. Also playback...
+	int wpm = 13;	//TODO: Make this user settable.
 	int dotTime = 1200/wpm;	//Milliseconds
 	int dashTime = 3*dotTime;
 	int spaceTime = 7*dotTime;
@@ -29,24 +29,25 @@ public class Inputter implements KeyListener{
 
 	public void keyPressed(KeyEvent key){
 
-		if (key.getKeyCode() == sendKey && !keyBeingHeld){
-			audioManager.play();
-			beginPress = System.currentTimeMillis();
+		if (!keyBeingHeld) {
+			if (key.getKeyCode() == sendKey) {
+				audioManager.play();
+				beginPress = System.currentTimeMillis();
+				if (beginPress - endPress > spaceTime && !atBeginning) {
+					gui.appendMorse(" / ");
+					gui.appendRoman(' ');
+					lastLetter = "";
+				} else if (beginPress - endPress > dashTime && !atBeginning) {
+					gui.appendMorse(" ");
+					lastLetter = "";
+				}
+				atBeginning = false;
+			} else if (key.getKeyCode() == KeyEvent.VK_DELETE) {
+				gui.resetTxtAreas();
+				atBeginning = true;
+				lastLetter = "";
+			}
 			keyBeingHeld = true;
-			if (beginPress - endPress > spaceTime && !atBeginning){
-				gui.appendMorse(" / ");
-				gui.appendRoman(' ');
-				lastLetter = "";
-			}
-			else if (beginPress - endPress > dashTime && !atBeginning){
-				gui.appendMorse(" ");
-				lastLetter = "";
-			}
-			atBeginning = false;
-		}else if (key.getKeyCode() == KeyEvent.VK_BACK_SPACE){
-			gui.resetTxtAreas();
-			atBeginning = true;
-			lastLetter = "";
 		}
 	}
 
@@ -54,7 +55,7 @@ public class Inputter implements KeyListener{
 		endPress = System.currentTimeMillis();
 		audioManager.stop();
 
-		if (key.getKeyCode() == KeyEvent.VK_ENTER)
+		if (key.getKeyCode() == sendKey)
 			if (endPress - beginPress <= dotTime + errMargin) {
 				gui.appendMorse(".");
 				lastLetter += '.';
@@ -66,8 +67,6 @@ public class Inputter implements KeyListener{
 				updateRomanGUI();
 			}
 		keyBeingHeld = false;
-		System.out.println(lastLetter);
-
 	}
 
 	private void updateRomanGUI(){

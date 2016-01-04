@@ -26,13 +26,11 @@ public class MorseTranslator {
 	}
 
 	public char toRoman(String morseSymbol){
-		if (morseToRoman.containsKey(morseSymbol))
-			return morseToRoman.get(morseSymbol).charValue();
-		else
-			return '?';
+		return morseToRoman.containsKey(morseSymbol) ? morseToRoman.get(morseSymbol).charValue() : '?';
 	}
 	public String toMorse(char romanSymbol){
-		return romanToMorse.get(new Character(romanSymbol));
+		Character toRetrieve = new Character(romanSymbol);
+		return romanToMorse.containsKey((toRetrieve)) ? romanToMorse.get(toRetrieve) : "?";
 	}
 
 }
