@@ -4,6 +4,7 @@ import java.awt.event.KeyListener;
 public class Inputter implements KeyListener{
 
 	int sendKey = KeyEvent.VK_ENTER;
+	int clearKey = KeyEvent.VK_BACK_SPACE;
 
 	//Timing - TODO: Farnsworth speed for playback. Also playback...
 	int wpm = 13;	//TODO: Make this user settable.
@@ -42,7 +43,7 @@ public class Inputter implements KeyListener{
 					lastLetter = "";
 				}
 				atBeginning = false;
-			} else if (key.getKeyCode() == KeyEvent.VK_DELETE) {
+			} else if (key.getKeyCode() == clearKey) {
 				gui.resetTxtAreas();
 				atBeginning = true;
 				lastLetter = "";
