@@ -10,7 +10,6 @@ Mac: Open Terminal, type "cd ", drag folder into terminal window, press enter.
 Type: "java Main"
 
 TODO:
-Add symbols other than A-Z.
 Add variable WPM
 Figure out a way to do variable Hz.
 
