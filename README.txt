@@ -10,7 +10,7 @@ Mac: Open Terminal, type "cd ", drag folder into terminal window, press enter.
 Type: "java Main"
 
 TODO:
-Add variable WPM
+Add variable WPM (hard set at 20 at the moment)
 Figure out a way to do variable Hz.
 
 For developers:

@@ -53,8 +53,6 @@ public class MorseTranslator {
 		romanArray[40] = new Character('@');
 		morseToRoman.put(morseArray[40], romanArray[40]);
 		romanToMorse.put(romanArray[40], morseArray[40]);
-
-		System.out.print(Arrays.toString(romanArray));
 	}
 
 	public char toRoman(String morseSymbol){
