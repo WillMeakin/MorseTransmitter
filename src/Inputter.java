@@ -7,7 +7,7 @@ public class Inputter implements KeyListener{
 	int clearKey = KeyEvent.VK_BACK_SPACE;
 
 	//Timing - TODO: Farnsworth speed for playback. Also playback...
-	int wpm = 20;	//TODO: Make this user settable.
+	int wpm = 16;	//TODO: Make this user settable.
 	int dotTime = 1200/wpm;	//Milliseconds
 	int dashTime = 3*dotTime;
 	int spaceTime = 7*dotTime;
